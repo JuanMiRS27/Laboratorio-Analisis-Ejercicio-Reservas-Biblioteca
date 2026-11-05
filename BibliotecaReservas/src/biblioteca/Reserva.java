@@ -2,8 +2,11 @@ package biblioteca;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Reserva {
+    private final List<ObservadorReserva> observadores = new ArrayList<>();
     private final String codigo;
     private final Estudiante estudiante;
     private final LocalDate fecha;
@@ -39,8 +42,13 @@ public class Reserva {
     public void finalizar() { estado.finalizar(this); }
 
     void cambiarEstado(EstadoReserva nuevoEstado) {
-        this.estado = nuevoEstado;
+    String anterior = estado.nombre();
+    this.estado = nuevoEstado;
+    String actual = estado.nombre();
+    for (ObservadorReserva observador : List.copyOf(observadores)) {
+        observador.actualizar(this, anterior, actual);
     }
+}
 
     @Override
     public String toString() {
@@ -48,4 +56,11 @@ public class Reserva {
             + " | " + fecha + " " + horaInicio + " | " + sala
             + " | Estado: " + getNombreEstado();
     }
+    public void agregarObservador(ObservadorReserva observador) {
+    if (observador != null) observadores.add(observador);
+}
+
+public void retirarObservador(ObservadorReserva observador) {
+    observadores.remove(observador);
+}
 }
